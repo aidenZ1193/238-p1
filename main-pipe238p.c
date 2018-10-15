@@ -10,7 +10,7 @@
 
 
 /*
-    ex: ls | wc
+    ex: ls |grep "main" |wc
 
 */
 
