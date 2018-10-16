@@ -63,32 +63,34 @@ runcmd(struct cmd *cmd)
       exit(0);
     //fprintf(stderr, "exec not implemented\n");
     // Your code here ...
+    //printf("args: %s, %s, %s\n", ecmd->argv[0], ecmd->argv[0], ecmd->argv[0]);
     execvp(ecmd->argv[0], ecmd->argv);
     break;
 
   case '>':
   case '<':
     rcmd = (struct redircmd*)cmd;
+    close(rcmd->fd);
+    //char buf[512];
     //fprintf(stderr, "redir not implemented\n");
     // Your code here ...
     // open file
-    if(rcmd->fd = open(rcmd->file, rcmd->mode, 0777) == -1){
-      fprintf(stderr, "File open failed.\n");
-      exit(-1);
-    }
     // close stdin / stdout, dup
-    if(cmd->type == '>'){
-      fclose(stdout);
-      dup(rcmd->fd);
+    //if(cmd->type == '>'){
+      //close(1);
+      if(( open(rcmd->file, rcmd->mode, 0777)) < 0){
+        fprintf(stderr, "File open failed.\n");
+        exit(-1);
+      }
+      //dup(rcmd->fd);
       printf("closing stdout\n");
-    }else{
-      fclose(stdin);
-      dup(rcmd->fd);
-    }
+
     // make new argv[]
-    close(rcmd->fd);
+    //ecmd = (struct execcmd*)cmd;
+    //char arg[] = {ecmd->argv[0], 0};
     runcmd(rcmd->cmd);
-    printf("closing stdin\n");
+    //execvp(ecmd->argv[0], ecmd->argv);
+    //printf("closing stdin\n");
     break;
 
   case '|':
