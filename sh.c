@@ -71,13 +71,7 @@ runcmd(struct cmd *cmd)
   case '<':
     rcmd = (struct redircmd*)cmd;
     close(rcmd->fd);
-    //char buf[512];
-    //fprintf(stderr, "redir not implemented\n");
-    // Your code here ...
-    // open file
-    // close stdin / stdout, dup
-    //if(cmd->type == '>'){
-      //close(1);
+
       if(( open(rcmd->file, rcmd->mode, 0777)) < 0){
         fprintf(stderr, "File open failed.\n");
         exit(-1);
@@ -85,9 +79,6 @@ runcmd(struct cmd *cmd)
       //dup(rcmd->fd);
       printf("closing stdout\n");
 
-    // make new argv[]
-    //ecmd = (struct execcmd*)cmd;
-    //char arg[] = {ecmd->argv[0], 0};
     runcmd(rcmd->cmd);
     //execvp(ecmd->argv[0], ecmd->argv);
     //printf("closing stdin\n");
@@ -95,8 +86,9 @@ runcmd(struct cmd *cmd)
 
   case '|':
     pcmd = (struct pipecmd*)cmd;
-    fprintf(stderr, "pipe not implemented\n");
+    //fprintf(stderr, "pipe not implemented\n");
     // Your code here ...
+    
     break;
   }    
   exit(0);
