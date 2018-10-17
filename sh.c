@@ -77,7 +77,7 @@ runcmd(struct cmd *cmd)
         exit(-1);
       }
       //dup(rcmd->fd);
-      printf("closing stdout\n");
+      //printf("closing stdout\n");
 
     runcmd(rcmd->cmd);
     //execvp(ecmd->argv[0], ecmd->argv);
@@ -86,9 +86,39 @@ runcmd(struct cmd *cmd)
 
   case '|':
     pcmd = (struct pipecmd*)cmd;
+    int stdout_cp = dup(1);
+    //int fd1[2];
+    //int fd2[2];
     //fprintf(stderr, "pipe not implemented\n");
     // Your code here ...
-    
+    if(pipe(p) < 0){
+      fprintf(stderr, "Pipe failed.\n");
+      exit(-1);
+    }
+    // manage left command
+    if(fork1() == 0){
+      // child process, write to pipe as input for next command, close stdout
+      close(1);
+      dup(p[1]);
+      close(p[1]);
+      close(p[0]);
+      runcmd(pcmd->left);
+    }
+    //wait(0);
+    // manage right command
+    if(fork1() == 0){
+      close(0);
+      // redirect output to terminal for now
+      //dup2(stdout_cp, 1);
+      dup(p[0]);
+      close(p[0]);
+      close(p[1]);
+      runcmd(pcmd->right);
+    }
+    close(p[0]);
+    close(p[1]);
+    wait(0);
+    wait(0);
     break;
   }    
   exit(0);
